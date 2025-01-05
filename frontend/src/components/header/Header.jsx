@@ -30,6 +30,8 @@ const Header = () => {
     if (profilepic) setPic(profilepic);
   }, []);
 
+  useEffect(() => {}, [isArchiveOpen]);
+
   return (
     <div className="header-container">
       <div className="relative w-full h-[80px] bg-white border-b border-[#F7F7F7]">
@@ -55,22 +57,17 @@ const Header = () => {
             <div>
               {role !== "Admin" && (
                 <div onClick={() => setIsArchiveOpen(true)} className="flex-1 min-w-max whitespace-nowrap mr-8 text-gray-600 flex items-center gap-2">
-                  {/* ArchiveShow Component */}
                   <span className="z-50">
                     <ArchiveShow />
                   </span>
-                  {/* Order Archive Text */}
                   <div>Order Archive</div>
                 </div>
               )}
             </div>
-            {/* Adjusted this part */}
             {/* Profile Icon */}
             <div className="profile-icon w-8 h-8 rounded-full bg-gray-300">
-              {/* Gambar profil dari BASE_URL */}
               <img src={pic ? `${BASE_URL}${pic}` : null} alt="Profile" className="w-full h-full object-cover rounded-full" />
             </div>
-            {/* Text for Name and Role */}
             <div className="flex flex-col ml-2 hidden md:flex">
               <span className="text-[12px] text-gray-800">{profile}</span>
               <span className="text-[10px] text-gray-400">{role}</span>

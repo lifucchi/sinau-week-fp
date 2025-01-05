@@ -5,49 +5,49 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const ArchivePopup = ({ isOpen, onClose }) => {
-  const [originalOrders, setOriginalOrders] = useState([]); // Data asli dari API
-  const [filteredOrders, setFilteredOrders] = useState([]); // Data yang difilter
-  const [search, setSearch] = useState(""); // Kata kunci pencarian
-  const [orderType, setOrderType] = useState(""); // Filter tipe order
-  const [loading, setLoading] = useState(true); // Status loading
-  const [error, setError] = useState(""); // Status error
-
-  // Mengambil data dari API saat komponen dimuat pertama kali
+  const [originalOrders, setOriginalOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [search, setSearch] = useState("");
+  const [orderType, setOrderType] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      setError("");
+    if (isOpen) {
+      const fetchOrders = async () => {
+        setLoading(true);
+        setError("");
 
-      try {
-        const response = await axios.get(`${API_URL}/orders/cashier_archive`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        });
+        try {
+          const response = await axios.get(`${API_URL}/orders/cashier_archive`, {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          });
 
-        // Format data sesuai kebutuhan
-        const formattedData = response.data.map((order) => ({
-          no_order: order.no_order,
-          type: order.order_type,
-          name: order.customer_name,
-          table: order.no_table || "N/A",
-          price: `Rp ${order.total.toLocaleString()}`,
-          date: new Date(order.createdAt).toLocaleString(),
-        }));
+          // Format data sesuai kebutuhan
+          const formattedData = response.data.map((order) => ({
+            no_order: order.no_order,
+            type: order.order_type,
+            name: order.customer_name,
+            table: order.no_table || "N/A",
+            price: `Rp ${order.total.toLocaleString()}`,
+            date: new Date(order.createdAt).toLocaleString(),
+          }));
 
-        // Set data asli dan data yang ditampilkan
-        setOriginalOrders(formattedData);
-        setFilteredOrders(formattedData);
-      } catch (error) {
-        setError("Failed to fetch data. Please try again.");
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+          // Set data asli dan data yang ditampilkan
+          setOriginalOrders(formattedData);
+          setFilteredOrders(formattedData);
+        } catch (error) {
+          setError("Failed to fetch data. Please try again.");
+          console.error("Error fetching orders:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchOrders();
-  }, []);
+      fetchOrders();
+    }
+  }, [isOpen]); // Tambahkan isOpen sebagai dependensi
 
   // Fungsi pencarian dan filter
   const handleSearch = () => {
@@ -86,7 +86,7 @@ const ArchivePopup = ({ isOpen, onClose }) => {
             </div>
             <select value={orderType} onChange={(e) => setOrderType(e.target.value)} className="border p-2 rounded">
               <option value="">Select type order</option>
-              <option value="Dine-in">Dine In</option>
+              <option value="Dine In">Dine In</option>
               <option value="Take Away">Take Away</option>
             </select>
             <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -94,13 +94,10 @@ const ArchivePopup = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          {/* Loading Indicator */}
           {loading && <div className="p-4 text-center text-gray-500">Loading...</div>}
 
-          {/* Error Message */}
           {error && <div className="p-4 text-center text-red-500">{error}</div>}
 
-          {/* Data Orders */}
           {!loading && !error && (
             <div className="m-2.5 gap-4 bg-white rounded-lg">
               {filteredOrders.length > 0 ? (
