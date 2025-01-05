@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Roboto", sans-serif;
+  }
+
+  svg {
+    pointer-events: auto;
+  }
+}
+
+body {
+  @apply font-sans;
+  @apply bg-[#F7F7F7];
+}
+
+@media print {
+  body {
+    visibility: hidden;
+  }
+  .printable {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
