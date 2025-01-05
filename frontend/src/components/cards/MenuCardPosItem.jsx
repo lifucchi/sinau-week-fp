@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { BASE_URL } from "../../config/api";
-
 import { DeleteButtonPos, EditButtonPos } from "../../assets/icons/index";
+import DetailPopup from "../popup/DetailPopup";
 
 const MenuCardPosItem = ({ selectedMenus, onQuantityChange, onDeleteMenu }) => {
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
   const incrementQuantity = () => {
     onQuantityChange(selectedMenus.id, selectedMenus.quantity + 1);
   };
@@ -29,9 +31,10 @@ const MenuCardPosItem = ({ selectedMenus, onQuantityChange, onDeleteMenu }) => {
             <DeleteButtonPos />
           </span>
         </div>
-        <span className="m-1">
+        <span onClick={() => setIsDetailOpen(true)} className="m-1">
           <EditButtonPos></EditButtonPos>
         </span>
+        <DetailPopup status="pos" isOpen={isDetailOpen} onClose={() => setIsDetailOpen(false)} menuItem={selectedMenus} />
 
         <div className="self-end">
           <div className="flex items-center justify-end mt-2">
