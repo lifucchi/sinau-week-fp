@@ -1,5 +1,8 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Cookies from "js-cookie";
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "../src/context/AuthContext";
 import ProtectedRoute from "../src/context/ProtectedRoute";
 import RedirectRoute from "../src/context/RedirectRoute";
@@ -19,12 +22,21 @@ import SalesReportCashier from "./components/content/SalesReportCashier";
 import Unauthorized from "./pages/Unauthorized";
 
 function App() {
+  const getRedirectPath = () => {
+    const role = Cookies.get("role");
+    if (role === "Admin") {
+      return "/admin-dashboard";
+    } else if (role === "Cashier") {
+      return "/pos";
+    }
+  };
   return (
     <AuthProvider>
       <Router>
         <Routes>
           <Route path="/payment-success" element={<PaymentPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/" element={<Navigate to={getRedirectPath()} />} />
           <Route
             path="/login"
             element={

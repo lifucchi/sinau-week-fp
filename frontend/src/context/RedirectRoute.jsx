@@ -13,9 +13,9 @@ const RedirectRoute = ({ children }) => {
   // Jika pengguna sudah terautentikasi, alihkan ke dashboard
 
   if (auth.isAuthenticated) {
-    if (auth.role === "admin") {
+    if (auth.role === "Admin") {
       return <Navigate to="/admin-dashboard" replace />;
-    } else if (auth.role === "kasir") {
+    } else if (auth.role === "Cashier") {
       return <Navigate to="/pos" replace />;
     }
   }
