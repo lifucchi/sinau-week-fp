@@ -52,13 +52,17 @@ const Header = () => {
               height: "50px",
             }}
           >
-            <div onClick={() => setIsArchiveOpen(true)} className="flex-1 min-w-max whitespace-nowrap mr-8 text-gray-600 flex items-center gap-2">
-              {/* ArchiveShow Component */}
-              <span className="z-50">
-                <ArchiveShow />
-              </span>
-              {/* Order Archive Text */}
-              <div>Order Archive</div>
+            <div>
+              {role !== "Admin" && (
+                <div onClick={() => setIsArchiveOpen(true)} className="flex-1 min-w-max whitespace-nowrap mr-8 text-gray-600 flex items-center gap-2">
+                  {/* ArchiveShow Component */}
+                  <span className="z-50">
+                    <ArchiveShow />
+                  </span>
+                  {/* Order Archive Text */}
+                  <div>Order Archive</div>
+                </div>
+              )}
             </div>
             {/* Adjusted this part */}
             {/* Profile Icon */}
