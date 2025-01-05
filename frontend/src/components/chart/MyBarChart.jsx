@@ -82,8 +82,8 @@ const MyBarChartWithFilters = () => {
   }
 
   return (
-    <div className="p-6 w-full bg-white" ref={chartContainerRef}>
-      <div className="p-6 w-full bg-white" ref={chartContainerRef}>
+    <div className="p-6 pr-0 w-[100%] bg-white" ref={chartContainerRef}>
+      <div className="p-6  w-full bg-white" ref={chartContainerRef}>
         <div className="flex flex-wrap justify-between items-center mb-6">
           {" "}
           {/* Tambahkan flex-wrap */}
@@ -103,7 +103,7 @@ const MyBarChartWithFilters = () => {
         </div>
       </div>
 
-      <BarChart width={chartWidth} height={400} data={filteredData} margin={{ top: 20, right: 20, left: 20, bottom: 5 }} barSize={30}>
+      <BarChart width={chartWidth} height={400} data={filteredData} margin={{ top: 20, right: 10, left: 10, bottom: 5 }} barSize={30}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="day" />
         <YAxis />

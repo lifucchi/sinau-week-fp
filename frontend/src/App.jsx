@@ -110,7 +110,7 @@ function App() {
           <Route
             path="/pos"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["Cashier"]}>
                 <div className="flex h-full">
                   <SideBar />
                   <div className="flex flex-col flex-1 w-full">
@@ -129,7 +129,7 @@ function App() {
           <Route
             path="/cashier-salesreport"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["Cashier"]}>
                 <div className="flex h-full">
                   <SideBar />
                   <div className="flex flex-col w-full">
@@ -137,8 +137,6 @@ function App() {
                     <div className="flex-1 p-5">
                       <MainPage setTitle="Sales Report" setDate="Date" />
                       <SalesReportCashier></SalesReportCashier>
-                      {/* <OrderSummary></OrderSummary> */}
-                      {/**/}
                     </div>
                   </div>
                 </div>
