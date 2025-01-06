@@ -37,6 +37,11 @@ const ListMenuPos = () => {
   const handleDeleteMenu = (id) => {
     setSelectedMenus((prevMenus) => prevMenus.filter((menu) => menu.id !== id));
   };
+
+  const handleUpdateNote = (menuId, note) => {
+    setSelectedMenus((prevMenus) => prevMenus.map((menu) => (menu.id === menuId ? { ...menu, note } : menu)));
+  };
+
   const handleFormSubmit = async () => {
     await fetchOrderNumber();
 
@@ -102,7 +107,6 @@ const ListMenuPos = () => {
     const fetchMenus = async () => {
       setLoading(true);
       try {
-        // Fetch menus
         const response = await axios.get(`${API_URL}/menus`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
@@ -116,12 +120,10 @@ const ListMenuPos = () => {
       }
     };
 
-    // Fetch both menus and order number
     fetchMenus();
     fetchOrderNumber();
   }, []);
 
-  // Optional: Monitor changes to menus and selectedMenus
   useEffect(() => {}, [menus, selectedMenus, orderNumber]);
 
   return (
@@ -156,7 +158,7 @@ const ListMenuPos = () => {
         <div className="flex flex-col flex-1 bg-white border border-[#EBEBEB] rounded-[10px] relative">
           <div className="p-5 pt-0 pb-0 mb-0">
             <div className="flex flex-col gap-4">
-              <OrderForm customer={customer} orderNumber={orderNumber} selectedMenus={selectedMenus} updateMenuQuantity={updateMenuQuantity} onSubmit={handleFormSubmit} onDeleteMenu={handleDeleteMenu} />
+              <OrderForm onEditNoteMenu={handleUpdateNote} customer={customer} orderNumber={orderNumber} selectedMenus={selectedMenus} updateMenuQuantity={updateMenuQuantity} onSubmit={handleFormSubmit} onDeleteMenu={handleDeleteMenu} />
             </div>
           </div>
         </div>

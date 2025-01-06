@@ -61,13 +61,9 @@ const OrderSummary = (role) => {
         const dataCategory = data.data.categoryStats || [];
 
         setstatsCategory(dataCategory);
-        // console.log(dataCategory);
-
-        const FoodTotalSold = dataCategory.filter((item) => item.category === "Food").reduce((total, item) => total + item.total_sold, 0);
-        const BeverageTotalSold = dataCategory.filter((item) => item.category === "Beverage").reduce((total, item) => total + item.total_sold, 0);
-        const DessertTotalSold = dataCategory.filter((item) => item.category === "Dessert").reduce((total, item) => total + item.total_sold, 0);
-
-        // Update state dengan data yang diambil
+        const FoodTotalSold = dataCategory.filter((item) => item.category === "Food").reduce((total, item) => total + parseInt(item.total_sold, 10), 0);
+        const BeverageTotalSold = dataCategory.filter((item) => item.category === "Beverage").reduce((total, item) => total + parseInt(item.total_sold, 10), 0);
+        const DessertTotalSold = dataCategory.filter((item) => item.category === "Dessert").reduce((total, item) => total + parseInt(item.total_sold, 10), 0);
         setStats({
           totalOrders: data.data.statistics.total_orders,
           totalOmzet: Number(data.data.statistics.omzet).toLocaleString("id-ID"),

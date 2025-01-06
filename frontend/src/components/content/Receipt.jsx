@@ -46,8 +46,8 @@ const Receipt = ({ data, status, handleClose }) => {
       const canvas = await html2canvas(printContent, {
         scale: 2,
         useCORS: true,
-        width: printContent.offsetWidth, // Sesuaikan dengan lebar konten
-        height: printContent.offsetHeight, // Sesuaikan dengan tinggi konten
+        width: printContent.offsetWidth,
+        height: printContent.offsetHeight,
       });
 
       const image = canvas.toDataURL("image/png");
@@ -124,9 +124,7 @@ const Receipt = ({ data, status, handleClose }) => {
             ✕
           </button>
         ) : null}
-
         {/* Konten */}
-
         <div className="flex flex-col items-center justify-center h-full">
           <h2 className="text-4xl font-semibold text-gray-800 mb-4 p-[100px] pb-2.5 ">Transaction {status}</h2>
           {isLoading || !orderItems.no_order ? (

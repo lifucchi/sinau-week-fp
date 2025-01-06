@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BASE_URL } from "../../config/api";
 
-const DetailPopup = ({ isOpen, onClose, menuItem, status }) => {
+const DetailPopup = ({ isOpen, onClose, menuItem, status, onSaveNote }) => {
+  const [note, setNote] = useState(menuItem.notes || "");
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  useEffect(() => {
+    setIsDisabled(note.trim() === "");
+  }, [note]);
+
+  const handleSubmit = () => {
+    onSaveNote(menuItem.id, note);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -33,7 +45,7 @@ const DetailPopup = ({ isOpen, onClose, menuItem, status }) => {
           <h3 className="text-lg font-medium  mb-0 text-gray-800">{menuItem.name}</h3>
 
           {/* Description */}
-          <p className="text-xs font-light text-gray-500  mt-0 mb-0">{menuItem.description}</p>
+          <p className="text-xs font-light text-gray-500 mt-0 mb-0">{menuItem.description}</p>
 
           {/* Price */}
           <div className="font-semibold text-sm text-blue-500">
@@ -43,19 +55,26 @@ const DetailPopup = ({ isOpen, onClose, menuItem, status }) => {
 
           {/* Note Input */}
           {status === "pos" && (
-            <div className="mt-4">
+            <div className="mt-4 ">
               <label htmlFor="notes" className="block text-gray-700 text-sm font-semibold mb-1">
-                Note
+                Add Note
               </label>
-              <textarea id="notes" placeholder="Enter your notes here..." className="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" rows={3} defaultValue={menuItem.notes} />
+              <textarea
+                id="notes"
+                placeholder="Enter your notes here..."
+                className="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
             </div>
           )}
         </div>
 
         {/* Submit Button */}
         {status === "pos" && (
-          <div className="p-4 border-t">
-            <span onClick={() => alert("Order submitted!")} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+          <div className="p-4 border-t w-full">
+            <span onClick={handleSubmit} className={`w-full py-2 px-4 rounded font-semibold text-white ${isDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 "}`} disabled={isDisabled}>
               Submit
             </span>
           </div>

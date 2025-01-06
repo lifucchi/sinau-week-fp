@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { ArchiveButton } from "../../assets/icons/index";
 import { API_URL } from "../../config/api";
 
-const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orderNumber, onDeleteMenu }) => {
+const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orderNumber, onDeleteMenu, onEditNoteMenu }) => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -105,7 +105,6 @@ const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orde
     }
 
     try {
-      // Prepare the order data
       const orderData = {
         id_user: profile,
         customer_name: formData.customer_name,
@@ -121,18 +120,16 @@ const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orde
           id_menu: menu.id,
           order_quantity: menu.quantity,
           price: menu.price,
-          note: "empty",
+          note: menu.note,
         })),
       };
 
-      // Make the API call using axios and await the response
       const response = await axios.post(`${API_URL}/orders`, orderData, {
         headers: {
           Authorization: `Bearer ${Cookies.get("token") || ""}`,
         },
       });
 
-      // Check if the response is successful
       alert("Order submitted successfully!");
       setFormData({
         customer_name: null,
@@ -173,23 +170,22 @@ const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orde
       return;
     }
 
-    // Prepare the order data
     const orderData = {
-      id_user: profile, // Use the extracted user ID from the token
+      id_user: profile,
       customer_name: formData.customer_name,
       no_table: formData.no_table,
       order_type: activeButton,
       no_order: formData.no_order,
       payment_nominal: selectedNominal,
       subtotal: selectedMenusArray.reduce((sum, menu) => sum + menu.price * menu.quantity, 0),
-      tax: 5000, // Static tax for now, you can adjust if needed
+      tax: 5000,
       total: selectedMenusArray.reduce((sum, menu) => sum + menu.price * menu.quantity, 0) + 5000,
-      status: 0, // Default status, modify based on your needs
+      status: 0,
       orderItems: selectedMenusArray.map((menu) => ({
         id_menu: menu.id,
         order_quantity: menu.quantity,
         price: menu.price,
-        note: "empty",
+        note: menu.note,
       })),
     };
 
@@ -316,7 +312,7 @@ const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orde
           {selectedMenusArray.length > 0 && (
             <div className="h-[250px] overflow-y-auto">
               {selectedMenusArray.map((menu) => (
-                <MenuCardPosItem key={menu.id} onDeleteMenu={onDeleteMenu} selectedMenus={menu} onQuantityChange={(id, newQuantity) => updateMenuQuantity(id, newQuantity)} />
+                <MenuCardPosItem key={menu.id} onDeleteMenu={onDeleteMenu} onUpdateNote={onEditNoteMenu} selectedMenus={menu} onQuantityChange={(id, newQuantity) => updateMenuQuantity(id, newQuantity)} />
               ))}
             </div>
           )}
@@ -354,7 +350,6 @@ const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orde
                   </span>
                 ))}
 
-                {/* Input field for custom nominal */}
                 <div className="flex items-center border rounded-lg p-2">
                   <input
                     type="number"
@@ -376,11 +371,7 @@ const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orde
                 >
                   Cancel
                 </button>
-                <button
-                  onClick={handleConfirmPayment}
-                  disabled={!selectedNominal} // Disable confirm button until a nominal is selected
-                  className={`px-4 py-2 text-sm font-medium text-white rounded-lg ${selectedNominal ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-300 cursor-not-allowed"}`}
-                >
+                <button onClick={handleConfirmPayment} disabled={!selectedNominal} className={`px-4 py-2 text-sm font-medium text-white rounded-lg ${selectedNominal ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-300 cursor-not-allowed"}`}>
                   Confirm & Pay
                 </button>
               </div>

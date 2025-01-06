@@ -14,9 +14,9 @@ const MenuCardItem = ({ menu, imageSrc, title, description, price, category, onC
         <div className="bg-blue-500 text-white rounded-[20px] text-[12px] p-2.5 pt-1 pb-1 absolute top-2 right-2">{category}</div>
       </div>
       {/* Judul */}
-      <h3 className="text-lg font-medium  mb-0 text-gray-800">{title}</h3>
+      <h3 className="text-lg font-medium m-2.5 mb-0 text-gray-800">{title}</h3>
       {/* Deskripsi */}
-      <p className="text-xs font-light text-gray-500 mt-0 mb-0">{description}</p>
+      <p className="text-xs font-light text-gray-500 m-2.5 mt-0 mb-0">{description}</p>
       {/* Harga dan Tombol */}
       <div className="flex items-center justify-between m-2.5 mt-0">
         <p className="font-semibold text-sm text-blue-500">
