@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import MenuCardPosItem from "../cards/MenuCardPosItem";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { ArchiveButton } from "../../assets/icons/index";
-
 import { API_URL } from "../../config/api";
 
-const OrderForm = ({ onSubmit, selectedMenus, updateMenuQuantity, orderNumber, onDeleteMenu }) => {
+const OrderForm = ({ customer, onSubmit, selectedMenus, updateMenuQuantity, orderNumber, onDeleteMenu }) => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -16,10 +15,10 @@ const OrderForm = ({ onSubmit, selectedMenus, updateMenuQuantity, orderNumber, o
 
   const [formData, setFormData] = useState({
     id_user: null,
-    customer_name: "",
+    customer_name: customer.customer_name || "",
     no_order: orderNumber,
-    no_table: "",
-    order_type: activeButton,
+    no_table: customer.no_table || "",
+    order_type: customer.order_type || activeButton,
     subtotal: null,
     tax: null,
     total: null,
@@ -74,34 +73,24 @@ const OrderForm = ({ onSubmit, selectedMenus, updateMenuQuantity, orderNumber, o
   }, []);
 
   useEffect(() => {
-    // console.log("StrokeMiterlimit:", orderNumber);
     setFormData((prevData) => ({
       ...prevData,
       no_order: orderNumber || "Default_Order_Number",
     }));
   }, [orderNumber, activeButton]);
 
-  const convertToOrderData = () => {
-    const orderData = {
-      id_user: profile,
-      customer_name: formData.customer_name,
-      no_table: formData.no_table,
-      order_type: formData.order_type,
-      no_order: formData.no_order,
-      payment_nominal: selectedNominal,
-      subtotal: selectedMenusArray.reduce((sum, menu) => sum + menu.price * menu.quantity, 0),
-      tax: 5000, // Static tax, adjust if needed
-      total: selectedMenusArray.reduce((sum, menu) => sum + menu.price * menu.quantity, 0) + 5000,
-      status: 1, // Default status
-      orderItems: selectedMenusArray.map((menu) => ({
-        id_menu: menu.id,
-        order_quantity: menu.quantity,
-        price: menu.price,
-      })),
-    };
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      customer_name: customer.customer_name || "",
+      order_type: customer.order_type || activeButton,
+      no_table: customer.no_table || "",
+    }));
+  }, [customer]);
 
-    return orderData;
-  };
+  useEffect(() => {
+    setActiveButton(formData.order_type || "Dine In");
+  }, [formData.order_type]);
 
   const handleConfirmPayment = async (e) => {
     e.preventDefault();
@@ -118,21 +107,21 @@ const OrderForm = ({ onSubmit, selectedMenus, updateMenuQuantity, orderNumber, o
     try {
       // Prepare the order data
       const orderData = {
-        id_user: profile, // Use the extracted user ID from the token
+        id_user: profile,
         customer_name: formData.customer_name,
         no_table: formData.no_table,
         order_type: activeButton,
         no_order: formData.no_order,
         payment_nominal: selectedNominal,
         subtotal: selectedMenusArray.reduce((sum, menu) => sum + menu.price * menu.quantity, 0),
-        tax: 5000, // Static tax for now, you can adjust if needed
+        tax: 5000,
         total: selectedMenusArray.reduce((sum, menu) => sum + menu.price * menu.quantity, 0) + 5000,
-        status: 1, // Default status, modify based on your needs
+        status: 1,
         orderItems: selectedMenusArray.map((menu) => ({
           id_menu: menu.id,
           order_quantity: menu.quantity,
           price: menu.price,
-          // note :
+          note: "empty",
         })),
       };
 
@@ -200,7 +189,7 @@ const OrderForm = ({ onSubmit, selectedMenus, updateMenuQuantity, orderNumber, o
         id_menu: menu.id,
         order_quantity: menu.quantity,
         price: menu.price,
-        // note :
+        note: "empty",
       })),
     };
 
@@ -288,7 +277,12 @@ const OrderForm = ({ onSubmit, selectedMenus, updateMenuQuantity, orderNumber, o
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700">No. Table</label>
-                <select name="no_table" defaultValue="" onChange={handleChange} className={`w-full mt-1 p-2 border rounded-xl focus:outline-none ${errors.no_table ? "border-red-500" : "border-gray-300 focus:ring-2 focus:ring-blue-500"}`}>
+                <select
+                  name="no_table"
+                  value={formData.no_table}
+                  onChange={handleChange}
+                  className={`w-full mt-1 p-2 border rounded-xl focus:outline-none ${errors.no_table ? "border-red-500" : "border-gray-300 focus:ring-2 focus:ring-blue-500"}`}
+                >
                   <option value="" disabled>
                     Select Table
                   </option>

@@ -3,6 +3,7 @@ import { Search, ArrowLeft } from "../../assets/icons/index";
 import { API_URL } from "../../config/api";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const ArchivePopup = ({ isOpen, onClose }) => {
   const [originalOrders, setOriginalOrders] = useState([]);
@@ -11,6 +12,8 @@ const ArchivePopup = ({ isOpen, onClose }) => {
   const [orderType, setOrderType] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (isOpen) {
       const fetchOrders = async () => {
@@ -26,6 +29,7 @@ const ArchivePopup = ({ isOpen, onClose }) => {
 
           // Format data sesuai kebutuhan
           const formattedData = response.data.map((order) => ({
+            id: order.id,
             no_order: order.no_order,
             type: order.order_type,
             name: order.customer_name,
@@ -56,6 +60,10 @@ const ArchivePopup = ({ isOpen, onClose }) => {
         (order.no_order.toLowerCase().includes(search.toLowerCase()) || order.name.toLowerCase().includes(search.toLowerCase()) || order.table.toLowerCase().includes(search.toLowerCase())) && (orderType ? order.type === orderType : true)
     );
     setFilteredOrders(filtered);
+  };
+
+  const handleArchived = (archivedId) => {
+    navigate("/pos", { state: archivedId });
   };
 
   if (!isOpen) return null;
@@ -114,7 +122,9 @@ const ArchivePopup = ({ isOpen, onClose }) => {
                     </div>
                     <div className="flex justify-between items-center mt-2">
                       <p className="font-bold">{order.price}</p>
-                      <ArrowLeft></ArrowLeft>
+                      <span onClick={() => handleArchived(order.id)}>
+                        <ArrowLeft></ArrowLeft>
+                      </span>
                     </div>
                   </div>
                 ))

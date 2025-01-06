@@ -5,19 +5,24 @@ import MenuCardList from "../cards/MenuCardList";
 import { API_URL } from "../../config/api";
 import Cookies from "js-cookie";
 import OrderForm from "../forms/OrderForm";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ListMenuPos = () => {
+  const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState("All Menu");
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const [selectedMenus, setSelectedMenus] = useState([]);
-
   const [orderNumber, setOrderNumber] = useState(null);
+  const [customer, setCustomer] = useState({
+    customer_name: "",
+    order_type: "",
+    no_table: "",
+  });
 
-  // const handleButtonClick = (value) => {
-  //   setActiveButton(value);
-  // };
+  const location = useLocation();
+  const archivedId = location.state;
 
   const handleMenuClick = (menu) => {
     setSelectedMenus((prevMenus) => {
@@ -44,18 +49,54 @@ const ListMenuPos = () => {
 
   const fetchOrderNumber = async () => {
     try {
-      // Fetch order number
       const response = await axios.get(`${API_URL}/orders/next_order_number`, {
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      setOrderNumber(response.data.orderNumber); // Adjusted for response structure
+      setOrderNumber(response.data.orderNumber);
     } catch (error) {
       console.error("Failed to fetch order number:", error);
-      setOrderNumber(null); // Set null if fetching fails
+      setOrderNumber(null);
     }
   };
+
+  const fetchOrderById = async (id) => {
+    try {
+      const response = await axios.get(`${API_URL}/orders/${id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+
+      const orderDetails = response.data.ListOrderDetails.map((item) => ({
+        id: item.Menu.id,
+        name: item.Menu.name,
+        price: item.Menu.price,
+        quantity: item.order_quantity,
+        photo: item.Menu.photo,
+      }));
+
+      setCustomer({
+        customer_name: response.data.customer_name,
+        order_type: response.data.order_type,
+        no_table: response.data.no_table,
+      });
+
+      setOrderNumber(response.data.no_order);
+      setSelectedMenus(orderDetails);
+    } catch (error) {
+      console.error("Failed to fetch order by ID:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (archivedId) {
+      fetchOrderById(archivedId);
+
+      navigate("/pos", { state: null });
+    }
+  }, [archivedId]);
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -81,9 +122,7 @@ const ListMenuPos = () => {
   }, []);
 
   // Optional: Monitor changes to menus and selectedMenus
-  useEffect(() => {
-    // Any side effects depending on menus or selectedMenus can go here
-  }, [menus, selectedMenus, orderNumber]);
+  useEffect(() => {}, [menus, selectedMenus, orderNumber]);
 
   return (
     <div className="grid grid-cols-3 gap-5 mt-5 w-full">
@@ -117,7 +156,7 @@ const ListMenuPos = () => {
         <div className="flex flex-col flex-1 bg-white border border-[#EBEBEB] rounded-[10px] relative">
           <div className="p-5 pt-0 pb-0 mb-0">
             <div className="flex flex-col gap-4">
-              <OrderForm orderNumber={orderNumber} selectedMenus={selectedMenus} updateMenuQuantity={updateMenuQuantity} onSubmit={handleFormSubmit} onDeleteMenu={handleDeleteMenu} />
+              <OrderForm customer={customer} orderNumber={orderNumber} selectedMenus={selectedMenus} updateMenuQuantity={updateMenuQuantity} onSubmit={handleFormSubmit} onDeleteMenu={handleDeleteMenu} />
             </div>
           </div>
         </div>
