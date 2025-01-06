@@ -48,7 +48,6 @@ export const AuthProvider = ({ children }) => {
       Cookies.set("profilepic", profileData.user.photo, { expires: 7 });
 
       // console.log(profileData);
-      console.log("halo2");
       setAuth({
         isAuthenticated: true,
         token,

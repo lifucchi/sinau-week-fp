@@ -28,6 +28,8 @@ function App() {
       return "/admin-dashboard";
     } else if (role === "Cashier") {
       return "/pos";
+    } else {
+      return "/login";
     }
   };
   return (
